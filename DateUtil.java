@@ -9,7 +9,7 @@ import java.time.temporal.ChronoUnit;
  * 线程安全的日期工具
  *
  * @author 朱天强
- * @date 2018/6/5
+ * @date 2018/06/05
  */
 public class DateUtil {
     private static final DateTimeFormatter DTF_YEAR = DateTimeFormatter.ofPattern("yyyy");
@@ -27,6 +27,10 @@ public class DateUtil {
         return DTF_YEAR.format(LocalDate.now());
     }
 
+    public static Boolean validateYear(final String dateString) {
+        return validate(dateString, DTF_YEAR);
+    }
+
     /**
      * 现在时间（天）
      *
@@ -34,6 +38,10 @@ public class DateUtil {
      */
     public static String getThisDay() {
         return DTF_DAY.format(LocalDate.now());
+    }
+
+    public static Boolean validateDay(final String dateString) {
+        return validate(dateString, DTF_DAY);
     }
 
     /**
@@ -45,6 +53,10 @@ public class DateUtil {
         return DTF_DAYS.format(LocalDate.now());
     }
 
+    public static Boolean validateDays(final String dateString) {
+        return validate(dateString, DTF_DAYS);
+    }
+
     /**
      * 现在时间（秒）
      *
@@ -52,6 +64,10 @@ public class DateUtil {
      */
     public static String getThisTime() {
         return DTF_TIME.format(LocalDate.now());
+    }
+
+    public static Boolean validateTime(final String dateString) {
+        return validate(dateString, DTF_TIME);
     }
 
     /**
@@ -63,16 +79,53 @@ public class DateUtil {
         return DTF_TIMES.format(LocalDate.now());
     }
 
+    public static Boolean validateTimes(final String dateString) {
+        return validate(dateString, DTF_TIMES);
+    }
+
+    /**
+     * 校验日期是否合法
+     *
+     * @param dateString           时间字符串
+     * @param dateTimeFormatString 时间格式字符串
+     * @return Boolean
+     */
+    public static Boolean validate(final String dateString, final String dateTimeFormatString) {
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimeFormatString);
+        try {
+            LocalDateTime.parse(dateString, dateTimeFormatter);
+            return true;
+        } catch (final Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * 校验日期是否合法
+     *
+     * @param dateString        时间字符串
+     * @param dateTimeFormatter 时间格式器
+     * @return Boolean
+     */
+    public static Boolean validate(final String dateString, final DateTimeFormatter dateTimeFormatter) {
+        try {
+            LocalDateTime.parse(dateString, dateTimeFormatter);
+            return true;
+        } catch (final Exception e) {
+            return false;
+        }
+    }
+
     /**
      * 比较两个时间的大小
      *
-     * @param dateString1    时间1
-     * @param dateString2    时间2
-     * @param dateTimeFormat 时间格式
+     * @param dateString1          时间1字符串
+     * @param dateString2          时间2字符串
+     * @param dateTimeFormatString 时间格式
      * @return -1:时间1小于时间2 | 0:时间1等于时间2 | 1:时间1大于时间2
      */
-    public static Integer compare(final String dateString1, final String dateString2, final String dateTimeFormat) {
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimeFormat);
+    public static Integer compare(final String dateString1, final String dateString2, final String dateTimeFormatString) {
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimeFormatString);
         final LocalDateTime dateTime1 = LocalDateTime.parse(dateString1, dateTimeFormatter);
         final LocalDateTime dateTime2 = LocalDateTime.parse(dateString2, dateTimeFormatter);
         if (dateTime1.isBefore(dateTime2)) {
@@ -85,33 +138,16 @@ public class DateUtil {
     }
 
     /**
-     * 校验日期是否合法
-     *
-     * @param dateString     时间
-     * @param dateTimeFormat 时间格式
-     * @return Boolean
-     */
-    public static Boolean validate(final String dateString, final String dateTimeFormat) {
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimeFormat);
-        try {
-            LocalDateTime.parse(dateString, dateTimeFormatter);
-            return true;
-        } catch (final Exception e) {
-            return false;
-        }
-    }
-
-    /**
      * 在原时间上增加x个时间单位
      *
-     * @param dateString     时间
-     * @param x              增加x
-     * @param chronoUnit     时间单位
-     * @param dateTimeFormat 时间格式
+     * @param dateString           时间字符串
+     * @param x                    x个时间单位
+     * @param chronoUnit           时间单位
+     * @param dateTimeFormatString 时间格式
      * @return 增加后的时间
      */
-    public static String add(final String dateString, final Long x, final ChronoUnit chronoUnit, final String dateTimeFormat) {
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimeFormat);
+    public static String add(final String dateString, final Long x, final ChronoUnit chronoUnit, final String dateTimeFormatString) {
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimeFormatString);
         final LocalDateTime dateTime = LocalDateTime.parse(dateString, dateTimeFormatter);
         final LocalDateTime newTime = dateTime.plus(x, chronoUnit);
         return dateTimeFormatter.format(newTime);
@@ -120,49 +156,49 @@ public class DateUtil {
     /**
      * 增加x小时
      *
-     * @param dateString     时间
-     * @param hours          小时
-     * @param dateTimeFormat 时间格式
+     * @param dateString           时间字符串
+     * @param hours                小时
+     * @param dateTimeFormatString 时间格式
      * @return 增加后的时间
      */
-    public static String addHours(final String dateString, final Long hours, final String dateTimeFormat) {
-        return add(dateString, hours, ChronoUnit.HOURS, dateTimeFormat);
+    public static String addHours(final String dateString, final Long hours, final String dateTimeFormatString) {
+        return add(dateString, hours, ChronoUnit.HOURS, dateTimeFormatString);
     }
 
     /**
      * 增加x分钟
      *
-     * @param dateString     时间
-     * @param minutes        分钟
-     * @param dateTimeFormat 时间格式
+     * @param dateString           时间字符串
+     * @param minutes              分钟
+     * @param dateTimeFormatString 时间格式
      * @return 增加后的时间
      */
-    public static String addMinutes(final String dateString, final Long minutes, final String dateTimeFormat) {
-        return add(dateString, minutes, ChronoUnit.MINUTES, dateTimeFormat);
+    public static String addMinutes(final String dateString, final Long minutes, final String dateTimeFormatString) {
+        return add(dateString, minutes, ChronoUnit.MINUTES, dateTimeFormatString);
     }
 
     /**
      * 增加x秒
      *
-     * @param dateString     时间
-     * @param seconds        秒
-     * @param dateTimeFormat 时间格式
+     * @param dateString           时间字符串
+     * @param seconds              秒
+     * @param dateTimeFormatString 时间格式
      * @return 增加后的时间
      */
-    public static String addSeconds(final String dateString, final Long seconds, final String dateTimeFormat) {
-        return add(dateString, seconds, ChronoUnit.SECONDS, dateTimeFormat);
+    public static String addSeconds(final String dateString, final Long seconds, final String dateTimeFormatString) {
+        return add(dateString, seconds, ChronoUnit.SECONDS, dateTimeFormatString);
     }
 
 
     /**
      * 是否为闰年
      *
-     * @param dateString     时间
-     * @param dateTimeFormat 时间格式
+     * @param dateString           时间字符串
+     * @param dateTimeFormatString 时间格式字符串
      * @return 增加后的时间
      */
-    public static Boolean isLeapYear(final String dateString, final String dateTimeFormat) {
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimeFormat);
+    public static Boolean isLeapYear(final String dateString, final String dateTimeFormatString) {
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimeFormatString);
         final LocalDate dateTime = LocalDate.parse(dateString, dateTimeFormatter);
         return dateTime.isLeapYear();
     }
